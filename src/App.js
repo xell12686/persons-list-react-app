@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function App() {
   return (
     <div className="App mt-3">
-      <Container className="PersonsList">
+      <Container className="PersonsList" fluid>
           <Row>
               <Col>
                 <h2>Famous Persons List</h2>

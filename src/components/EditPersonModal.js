@@ -4,10 +4,13 @@ import DatePicker from 'reactstrap-date-picker';
 import axios from 'axios';
 
 const EditPersonModal = (props) => {
-    // A Controlled Form using refs
     const [data, setData] = useState({});
+    const [previousName, setPreviousName] = useState('');
 
     useEffect(() => {
+        if (props.editPersonData.name) {
+            setPreviousName(props.editPersonData.name);
+        }
         if (props.editPersonData) {
             setData(props.editPersonData);
         }
@@ -22,7 +25,6 @@ const EditPersonModal = (props) => {
         stringBirthday = parsedDate.toISOString();
     }
 
-    
     const handleEdit = (event) => {
         setData({ ...data, [event.target.name]: event.target.value });
     }
@@ -31,16 +33,9 @@ const EditPersonModal = (props) => {
         setData({ ...data,  birthday: value });
     }
 
-    // const handleCancel = (e) => {
-    //     e.preventDefault();
-    //     props.closeModal();
-    // }
-
     const handleUpdatePerson = (e) => {
         e.preventDefault();
-        console.log('init axios post to update');
-        console.log(data);
-        axios.post('http://localhost:3000/persons', data)
+        axios.put(`http://localhost:3000/persons/${previousName}`, data)
             .then((response) => {
                 props.closeModal();
                 props.reloadList();
@@ -55,7 +50,7 @@ const EditPersonModal = (props) => {
             <ModalBody>
                 <FormGroup>
                     <Label for="name" hidden>Name</Label>
-                    <Input id="title" value={data.name} placeholder="Person Name" name="name" onChange={handleEdit} required />
+                    <Input id="name" defaultValue={data.name} data-id={data.ID} name="name" onChange={handleEdit} />
                 </FormGroup>
                 <FormGroup>
                     <Label for="occupation" hidden>Occupation</Label>
@@ -63,7 +58,8 @@ const EditPersonModal = (props) => {
                 </FormGroup>
                 <FormGroup>
                     <Label for="birthday" hidden>Birthday</Label>
-                    <DatePicker 
+                    <DatePicker
+                        id="birthday"
                         name="birthday" 
                         value={stringBirthday}
                         onChange={(v,f) => handleEditBirthday(v, f)}

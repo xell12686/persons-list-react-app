@@ -37,6 +37,7 @@ const PersonsList = () => {
     const openEditPersonModal = (e) => {
         e.preventDefault();
         const newTempData = {
+            ID: parseInt(e.currentTarget.dataset.id),
             name: e.currentTarget.dataset.name,
             occupation: e.currentTarget.dataset.occupation, 
             birthday: e.currentTarget.dataset.birthday,
@@ -48,6 +49,16 @@ const PersonsList = () => {
 
     const closeEditPersonModal = (e) => {
         setEditPersonModal(!editPersonModal);
+    }
+
+    const handleDeletePerson = (e) => {
+        e.preventDefault();
+        const personName = e.currentTarget.dataset.name;
+        axios.delete(`http://localhost:3000/persons/${personName}`).then((response) => {
+            setLoaded(false);
+            console.log(response.data);
+        })
+        ;
     }
 
     return (
@@ -78,15 +89,21 @@ const PersonsList = () => {
                 </thead>
                 <tbody>
                     {isLoaded ?
-                        persons.map((item, i) => {
+                        persons.map((item) => {
                             return (
-                                <tr key={i}>
+                                <tr key={item.ID}>
                                     <td>{item.name}</td>
                                     <td>{item.occupation}</td>
-                                    <td><Moment format="DD MMMM YYYY" date={item.birthday} /></td>
+                                    <td>
+                                        {item.birthday ?
+                                            <Moment format="DD MMMM YYYY" date={item.birthday} />
+                                            : ''
+                                        }   
+                                    </td>
                                     <td>{item.citizenship}</td>
                                     <td>
                                         <Button color="success" size="sm" 
+                                            data-id={item.ID} 
                                             data-name={item.name} 
                                             data-occupation={item.occupation} 
                                             data-birthday={item.birthday} 
@@ -94,7 +111,12 @@ const PersonsList = () => {
                                             onClick={openEditPersonModal}>
                                             <FaEdit onClick={(e)=> e.preventDefault()} />
                                         </Button>
-                                        <Button color="danger" size="sm"><FaTrashAlt /></Button>
+                                        <Button color="danger" size="sm"
+                                            data-name={item.name} 
+                                            onClick={handleDeletePerson}
+                                        >
+                                            <FaTrashAlt onClick={(e)=> e.preventDefault()}/>
+                                        </Button>
                                     </td>
                                 </tr>
                             )

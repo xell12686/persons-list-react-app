@@ -9,19 +9,19 @@ const NewPersonModal = (props) => {
     const [stringBirthday, setBirthday] = useState('');
     
     useEffect(() => {
-       
         if (data.birthday) {
             const parsedDate = new Date(data.birthday);
             const string = parsedDate.toISOString();
             setBirthday(string);
         }        
         return () => {
-            setData({});
+            //setData({});
         };
     }, [data.birthday])
 
     
     const handleNewPersonData = (event) => {
+        event.preventDefault();
         setData({ ...data, [event.target.name]: event.target.value });
     }
     
@@ -47,30 +47,23 @@ const NewPersonModal = (props) => {
             <ModalBody>
                 <FormGroup>
                     <Label for="name" hidden>Name</Label>
-                    <Input id="title" placeholder="Person Name" value={data.name} name="name" onChange={handleNewPersonData} required />
+                    <Input id="name" placeholder="Person Name" value={data.name || ''} name="name" onChange={handleNewPersonData} required />
                 </FormGroup>
                 <FormGroup>
                     <Label for="occupation" hidden>Occupation</Label>
-                    <Input id="occupation" placeholder="Occupation" value={data.occupation} name="occupation" onChange={handleNewPersonData} />
+                    <Input id="occupation" placeholder="Occupation" value={data.occupation  || ''} name="occupation" onChange={handleNewPersonData} required/>
                 </FormGroup>
                 <FormGroup>
                     <Label for="birthday" hidden>Birthday</Label>
-                    {/* <Input
-                        type="date"
-                        id="birthday"
-                        placeholder="Birthday"
-                        name="birthday" 
-                        onChange={props.newPerson}
-                    /> */}
                     <DatePicker 
                         name="birthday" 
-                        value={stringBirthday}
+                        value={stringBirthday || ''}
                         onChange={(v,f) => handleEditBirthday(v, f)}
                     />                    
                 </FormGroup>
                 <FormGroup>
                     <Label for="citizenship" hidden>Citizenship</Label>
-                    <Input id="citizenship" placeholder="Citizenship" value={data.citizenship} name="citizenship" onChange={handleNewPersonData} />
+                    <Input id="citizenship" placeholder="Citizenship" value={data.citizenship  || ''} name="citizenship" onChange={handleNewPersonData} required />
                 </FormGroup>
             </ModalBody>
             <ModalFooter>

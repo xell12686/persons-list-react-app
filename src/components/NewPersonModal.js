@@ -5,19 +5,20 @@ import axios from 'axios';
 
 const NewPersonModal = (props) => {
     
-    const [submitEnabled, setSubmit] = useState(false);
     const [data, setData] = useState({});
-
+    const [stringBirthday, setBirthday] = useState('');
+    
     useEffect(() => {
-        if (data.name && data.birthday) {
-            setSubmit(true);
-        } else {
-            setSubmit(false);
-        }
+       
+        if (data.birthday) {
+            const parsedDate = new Date(data.birthday);
+            const string = parsedDate.toISOString();
+            setBirthday(string);
+        }        
         return () => {
             setData({});
         };
-    }, [data])
+    }, [data.birthday])
 
     
     const handleNewPersonData = (event) => {
@@ -38,11 +39,7 @@ const NewPersonModal = (props) => {
             });
     }    
 
-    let stringBirthday = '';
-    if (data.birthday) {
-        const parsedDate = new Date(data.birthday);
-        stringBirthday = parsedDate.toISOString();
-    }
+
 
     return (
         <Modal isOpen={props.isModalOpen} toggle={props.toggleModal}>
@@ -50,11 +47,11 @@ const NewPersonModal = (props) => {
             <ModalBody>
                 <FormGroup>
                     <Label for="name" hidden>Name</Label>
-                    <Input id="title" placeholder="Person Name" name="name" onChange={handleNewPersonData} required />
+                    <Input id="title" placeholder="Person Name" value={data.name} name="name" onChange={handleNewPersonData} required />
                 </FormGroup>
                 <FormGroup>
                     <Label for="occupation" hidden>Occupation</Label>
-                    <Input id="occupation" placeholder="Occupation" name="occupation" onChange={handleNewPersonData} />
+                    <Input id="occupation" placeholder="Occupation" value={data.occupation} name="occupation" onChange={handleNewPersonData} />
                 </FormGroup>
                 <FormGroup>
                     <Label for="birthday" hidden>Birthday</Label>
@@ -73,11 +70,13 @@ const NewPersonModal = (props) => {
                 </FormGroup>
                 <FormGroup>
                     <Label for="citizenship" hidden>Citizenship</Label>
-                    <Input id="citizenship" placeholder="Citizenship" name="citizenship" onChange={props.newPerson} />
+                    <Input id="citizenship" placeholder="Citizenship" value={data.citizenship} name="citizenship" onChange={handleNewPersonData} />
                 </FormGroup>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" disabled={!submitEnabled} onClick={handleAddPerson}>Add Person</Button>{' '}
+                <Button color="primary" 
+                    disabled={(data.name && data.birthday) ? false : true} 
+                    onClick={handleAddPerson}>Add Person</Button>{' '}
                 <Button color="secondary" onClick={props.toggleModal}>Cancel</Button>
             </ModalFooter>
         </Modal>
